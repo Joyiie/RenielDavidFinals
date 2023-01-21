@@ -1,0 +1,148 @@
+﻿@page
+@model RenielDavid.webdev.Pages.Manage.Vids.Index
+<h3>VIDEOS</h3>
+
+<div class="search">
+    <i class="bi bi-search"></i>
+    <input type="text" class="form-control" placeholder="Search" id="search" value="@Model?.View?.Videos?.Keyword">
+</div>
+
+<div class="row">
+    <div class="col-3">
+        <div class="form-group">
+            <label for="">Sort By</label>
+            <select class="form-control" id="sortBy" asp-for="View.Videos.SortBy">
+                <option value="">choose</option>
+                <option value="name">Name</option>
+                <option value="DateOfPublish">DateOfPublishn</option>
+
+            </select>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group">
+            <label for="">Sort Order</label>
+            <select class="form-control" id="sortOrder" asp-for="View.Videos.SortOrder">
+                <option value="1">Ascending</option>
+                <option value="2">Descending</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group">
+            <label for="">StreamingAndService</label>
+            <select class="form-control" id="" asp-for="View.StremingandServiceTitle">
+                <option selected value="@Model.View.Id">@Model.View.Id</option>
+                <option value="">choose</option>
+            </select>
+
+
+            <select class="form-control select2" id="roleId">
+
+                @{
+                    if (Model.View.Id != null)
+                    {
+                        <option selected value="@Model.View.Id">@Model.View.Id</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+
+
+@{
+    if (Model.View != null && Model.View.Videos != null && Model.View.Videos.Items != null && Model.View.Videos.Items.Count > 0)
+    {
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">DateOfPublish</th>
+                    <th scope="col">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var video in Model?.View?.Videos.Items)
+
+                    {
+                        <tr>
+                            <th scope="row">@video.Title</th>
+                            <td>@video.Description</td>
+                            <td>@video.DateOfPublish</td>
+                            <td>@video.Type</td>
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @{
+                    if (Model?.View?.Videos.PageIndex > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="/manage/videos?pageIndex=@(Model?.View?.Videos.PageIndex-1)&pageSize=@(Model?.View?.Videos.PageSize)&sortBy=@(Model?.View?.Videos.SortBy)&sortOrder=@(Model?.View?.Videos.SortOrder)&roleId=@(Model?.View?.Id)">Previous</a></li>
+                    }
+
+                    <li class="page-item"><span class="page-link">page @Model?.View?.Videos.PageIndex of @Model?.View?.Videos.PageCount (@Model?.View?.Videos.TotalRows total rows)</span></li>
+
+
+                    if (Model?.View?.Videos.PageIndex < Model?.View?.Videos.PageCount)
+                    {
+                        <li class="page-item"><a class="page-link" href="/manage/videos?pageIndex=@(Model?.View?.Videos.PageIndex+1)&pageSize=@(Model?.View?.Videos.PageSize)&sortBy=@(Model?.View?.Videos.SortBy)&sortOrder=@(Model?.View?.Videos.SortOrder)&roleId=@(Model?.View?.Id)">Next</a></li>
+                    }
+                }
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div>There are no records to show.</div>
+    }
+}
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $('#Id').select2({
+                ajax: {
+                    url: '?handler=StreamingAndServicesLookup',
+                    headers: { "RequestVerificationToken": $('input[video="__RequestVerificationToken"]').val() },
+                    data: function (params) {
+                        var query = {
+                            keyword: params.term,
+                            page: params.page || 1
+                        }
+
+                        return query;
+                    }
+                }
+            });
+        });
+
+
+        $("#search").keyup(function (event) {
+            if (event.keyCode === 13) {
+                window.location = "/manage/videos?keyword=" + $("#search").val() + "&Id=" + $("#Id").val();
+            }
+        });
+
+        $("#sortBy").change(function () {
+            window.location = "/manage/videos?keyword=@(Model.View.Videos.Keyword)&sortBy=" + $("#sortBy").val() + "&sortOrder=" + $("#sortOrder").val() + "&#Id + $("##Id").val();
+        });
+
+        $("#sortOrder").change(function () {
+            window.location = "/manage/videos?keyword=@(Model.View.Videos.Keyword)&sortBy=" + $("#sortBy").val() + "&sortOrder=" + $("#sortOrder").val() + "&#Id=" + $("##StreamingId").val();
+        });
+
+        $("#Id").change(function () {
+            window.location = "/manage/videos?keyword=@(Model.View.Videos.Keyword)&sortBy=" + $("#sortBy").val() + "&sortOrder=" + $("#sortOrder").val() + "&#Id=" + $("##Id").val();
+        });
+    </script>
+}

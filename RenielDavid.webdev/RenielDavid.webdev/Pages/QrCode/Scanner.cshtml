@@ -1,0 +1,12 @@
+﻿@page
+@model RenielDavid.webdev.Pages.QrCode.ScannerModel
+@{
+}
+<div id="qrcode"></div>
+@section Scripts{
+    <script>
+        window.addEventListener("load", () => {
+            var qrc = new QRCode(document.getElementById("qrcode"), "https://code-boxx.com/");
+        });
+    </script>
+}
